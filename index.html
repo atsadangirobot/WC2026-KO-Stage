@@ -171,11 +171,13 @@ main{max-width:700px;margin:0 auto;padding:14px 12px 40px}
         <div class="rr"><span class="rpts" style="background:var(--red-bg);color:var(--red-text)">−1</span><span>ทายกลับหัว เช่น ทาย 2–1 แต่ออก 1–2</span></div>
         <div class="rr"><span class="rpts" style="background:var(--gray-bg);color:var(--faint)">0</span><span>ไม่ทาย / ทายหลัง Kickoff</span></div>
       </div>
-      <div class="rs"><div class="rh">🏆 โบนัสทายแชมป์</div>
-        <div class="rr" style="display:block;padding:11px 14px;font-size:13px;line-height:1.7;color:var(--text)">
-          ปิดรับทายแชมป์แล้ว — ผู้ที่ทายไว้ก่อนจบรอบแบ่งกลุ่มจะได้รับคะแนนตามที่ทายไว้:<br><br>
-          • ถูกต้อง = <strong>+15 คะแนน</strong><br>
-          • ผลจะประกาศเมื่อจบรอบชิงชนะเลิศ
+      <div class="rs"><div class="rh">🏆 โบนัสทายแชมป์ (เลือก/เปลี่ยนทีมได้เรื่อยๆ)</div>
+        <div class="rr" style="display:block;padding:11px 14px;font-size:13px;line-height:1.8;color:var(--text)">
+          ทายแชมป์ได้ตลอด — เปลี่ยนทีมได้ แต่คะแนนจะขึ้นกับ <strong>เวลาที่ทาย/เปลี่ยนล่าสุด</strong>:<br><br>
+          • ทายไว้ก่อนจบรอบแบ่งกลุ่ม (และไม่เคยเปลี่ยน) = <strong>+30 คะแนน</strong><br>
+          • ทาย/เปลี่ยนทีมตั้งแต่ตอนนี้ จนถึงก่อนจบรอบรองชนะเลิศ = <strong>+15 คะแนน</strong><br>
+          • ทาย/เปลี่ยนทีมหลังจบรอบรองชนะเลิศ = <strong>+10 คะแนน</strong><br><br>
+          ผลจะประกาศและให้คะแนนเมื่อจบรอบชิงชนะเลิศ
         </div>
       </div>
       <div class="rs"><div class="rh">📋 หมายเหตุ</div>
@@ -201,12 +203,27 @@ main{max-width:700px;margin:0 auto;padding:14px 12px 40px}
 <div id="toast"></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbzW5LxenBu4QjscUb0_BWHmnyTmdk8NgXS9OILcJSTPY5kQdiQ3wfZWz7r_rRhwHYOe8w/exec';
+const API = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
 const ROUND_LABEL = {
   GROUP:'รอบแบ่งกลุ่ม', R32:'รอบ 32 ทีม', R16:'รอบ 16 ทีม',
   QF:'รอบ 8 ทีม', SF:'รอบรองชนะเลิศ', THIRD:'ชิงอันดับ 3', FINAL:'รอบชิงชนะเลิศ',
 };
+
+const WC_TEAMS = [
+  {n:'Mexico',f:'🇲🇽'},{n:'South Korea',f:'🇰🇷'},{n:'Czechia',f:'🇨🇿'},{n:'South Africa',f:'🇿🇦'},
+  {n:'Canada',f:'🇨🇦'},{n:'Bosnia & Herz.',f:'🇧🇦'},{n:'Switzerland',f:'🇨🇭'},{n:'Qatar',f:'🇶🇦'},
+  {n:'Brazil',f:'🇧🇷'},{n:'Morocco',f:'🇲🇦'},{n:'Scotland',f:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},{n:'Haiti',f:'🇭🇹'},
+  {n:'USA',f:'🇺🇸'},{n:'Paraguay',f:'🇵🇾'},{n:'Australia',f:'🇦🇺'},{n:'Türkiye',f:'🇹🇷'},
+  {n:'Germany',f:'🇩🇪'},{n:'Curaçao',f:'🇨🇼'},{n:'Ivory Coast',f:'🇨🇮'},{n:'Ecuador',f:'🇪🇨'},
+  {n:'Netherlands',f:'🇳🇱'},{n:'Japan',f:'🇯🇵'},{n:'Sweden',f:'🇸🇪'},{n:'Tunisia',f:'🇹🇳'},
+  {n:'Belgium',f:'🇧🇪'},{n:'Egypt',f:'🇪🇬'},{n:'Iran',f:'🇮🇷'},{n:'New Zealand',f:'🇳🇿'},
+  {n:'Spain',f:'🇪🇸'},{n:'Cape Verde',f:'🇨🇻'},{n:'Uruguay',f:'🇺🇾'},{n:'Saudi Arabia',f:'🇸🇦'},
+  {n:'France',f:'🇫🇷'},{n:'Senegal',f:'🇸🇳'},{n:'Norway',f:'🇳🇴'},{n:'Iraq',f:'🇮🇶'},
+  {n:'Argentina',f:'🇦🇷'},{n:'Austria',f:'🇦🇹'},{n:'Algeria',f:'🇩🇿'},{n:'Jordan',f:'🇯🇴'},
+  {n:'Portugal',f:'🇵🇹'},{n:'DR Congo',f:'🇨🇩'},{n:'Colombia',f:'🇨🇴'},{n:'Uzbekistan',f:'🇺🇿'},
+  {n:'England',f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},{n:'Croatia',f:'🇭🇷'},{n:'Ghana',f:'🇬🇭'},{n:'Panama',f:'🇵🇦'},
+];
 
 const AV = [['#dbeafe','#1e40af'],['#dcfce7','#166534'],['#fef3c7','#92400e'],['#fce7f3','#9d174d'],
   ['#ede9fe','#4c1d95'],['#ffedd5','#9a3412'],['#d1fae5','#065f46'],['#fee2e2','#991b1b'],
@@ -455,22 +472,82 @@ async function subPred(mid) {
   if (m) m.myPrediction = { predHome:ph, predAway:pa, points:null };
 }
 
+let S_selectedTeam = null;
+
 async function loadChamp() {
   const el = document.getElementById('sc-champ');
   el.innerHTML = '<div class="loader">⏳ กำลังโหลด...</div>';
-  const r = await api({ action:'getChampion', userId:S.user.id });
+  const [r, st] = await Promise.all([
+    api({ action:'getChampion', userId:S.user.id }),
+    api({ action:'getChampionStatus' }),
+  ]);
   if (!r.ok) { el.innerHTML=`<div class="loader">❌ ${r.error}</div>`; return; }
 
-  let h = `<div style="background:var(--gray-bg);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:14px;font-size:13px;color:var(--muted);text-align:center">
-    🔒 ปิดรับทายแชมป์แล้ว — ผลจะคิดคะแนนตอนจบรอบชิงชนะเลิศ
+  S_selectedTeam = r.pick ? r.pick.team : null;
+  renderChamp(el, r.pick, st);
+}
+
+function renderChamp(el, pick, st) {
+  const tierInfo = {
+    ROUND1: { label: 'ทายไว้ก่อนจบรอบแบ่งกลุ่ม', pts: 30 },
+    ROUND2: { label: 'ทายไว้ช่วงนี้ (หลังจบรอบกลุ่ม ก่อนจบรอบรองฯ)', pts: 15 },
+    ROUND3: { label: 'ทายไว้หลังจบรอบรองชนะเลิศ', pts: 10 },
+  };
+  const currentTierLabel = st.semifinalClosed
+    ? `ตอนนี้ทาย/เปลี่ยนทีมจะได้ <strong>+10</strong> คะแนนถ้าถูก (หลังจบรอบรองชนะเลิศ)`
+    : `ตอนนี้ทาย/เปลี่ยนทีมจะได้ <strong>+15</strong> คะแนนถ้าถูก`;
+
+  let h = `<div style="background:var(--amber-bg);border:1px solid #fde68a;border-radius:var(--rs);padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--amber-text)">
+    🏆 ${currentTierLabel}<br>
+    <span style="font-size:12px;opacity:.85">เปลี่ยนทีมได้เสมอ — แต่คะแนนจะลดเหลือตาม tier ปัจจุบันทันทีที่เปลี่ยน</span>
   </div>`;
 
-  if (r.pick) {
-    h += `<div class="locked-pick">ทายไว้: ${r.pick.teamFlag} <strong>${r.pick.team}</strong> · ถูกแล้วได้ +15 คะแนน</div>`;
-  } else {
-    h += `<div style="text-align:center;color:var(--faint);font-size:13px;padding:20px">คุณไม่ได้ทายแชมป์ไว้</div>`;
+  if (pick) {
+    const ti = tierInfo[pick.roundLocked] || { label: pick.roundLocked, pts: '?' };
+    h += `<div class="locked-pick">ทายอยู่ตอนนี้: ${pick.teamFlag} <strong>${pick.team}</strong><br>
+      <span style="font-size:12px">${ti.label} · ถูกแล้วได้ +${ti.pts} คะแนน</span>
+    </div>`;
   }
+
+  h += `<div class="card" style="padding:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text)">${pick ? 'เปลี่ยนทีม:' : 'เลือกทีมแชมป์:'}</div>
+    <div id="team-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+      ${WC_TEAMS.map(t => `
+        <button class="team-pick" data-team="${t.n}" onclick="selectChampTeam('${t.n}')"
+          style="border:1px solid ${S_selectedTeam===t.n?'var(--gold)':'var(--border2)'};background:${S_selectedTeam===t.n?'#fffbeb':'#fff'};border-radius:var(--rs);padding:8px 4px;text-align:center;cursor:pointer;font-size:11px">
+          <div style="font-size:20px">${t.f}</div><div style="margin-top:2px">${t.n}</div>
+        </button>`).join('')}
+    </div>
+    <button class="btn-sub" style="width:100%" onclick="submitChampPick()" id="champ-submit-btn">
+      ${pick ? 'ยืนยันเปลี่ยนทีม' : 'ยืนยันทายแชมป์'}
+    </button>
+    <div class="msg" id="champ-msg"></div>
+  </div>`;
+
   el.innerHTML = h;
+}
+
+function selectChampTeam(name) {
+  S_selectedTeam = name;
+  document.querySelectorAll('.team-pick').forEach(btn => {
+    const isSel = btn.dataset.team === name;
+    btn.style.borderColor = isSel ? 'var(--gold)' : 'var(--border2)';
+    btn.style.background = isSel ? '#fffbeb' : '#fff';
+  });
+}
+
+async function submitChampPick() {
+  if (!S_selectedTeam) { toast('❌ กรุณาเลือกทีมก่อน'); return; }
+  const team = WC_TEAMS.find(t => t.n === S_selectedTeam);
+  const btn = document.getElementById('champ-submit-btn');
+  const msg = document.getElementById('champ-msg');
+  btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+  const r = await api({ action:'submitChampion', userId:S.user.id, team:team.n, teamFlag:team.f });
+  btn.disabled = false;
+  if (!r.ok) { msg.textContent = '❌ '+r.error; msg.className='msg err'; btn.textContent='ยืนยันทายแชมป์'; return; }
+  msg.textContent = '✓ บันทึกแล้ว'; msg.className='msg ok';
+  toast('✓ ทายแชมป์สำเร็จ');
+  setTimeout(loadChamp, 1000);
 }
 
 async function loadAdmin() {
@@ -487,10 +564,11 @@ async function loadAdmin() {
 
   const r = await api({ action:'getAdminData', adminPassword:ap });
   if (!r.ok) { store.set('adminPass',null); el.innerHTML=`<div class="loader">❌ ${r.error}</div>`; return; }
-  renderAdmin(r.matches, r.users, ap, el);
+  const champStatus = await api({ action:'getChampionStatus' });
+  renderAdmin(r.matches, r.users, ap, el, champStatus);
 }
 
-function renderAdmin(matches, users, ap, el) {
+function renderAdmin(matches, users, ap, el, champStatus) {
   const groupMatches = matches.filter(m => m.round === 'GROUP');
   const koMatches = matches.filter(m => m.round !== 'GROUP');
   const fin = koMatches.filter(m=>m.homeScore!==null).length;
@@ -533,6 +611,30 @@ function renderAdmin(matches, users, ap, el) {
   </div>
 
   <div class="as">
+    <div class="ah">🏆 ทายแชมป์โลก</div>
+    <div class="ab">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--gray-bg);border-radius:var(--rs);margin-bottom:12px">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">สถานะรอบรองชนะเลิศ</div>
+          <div style="font-size:12px;color:var(--muted)">${champStatus.semifinalClosed ? 'ปิดแล้ว — ทายตอนนี้ได้ +10 คะแนน' : 'ยังเปิดอยู่ — ทายตอนนี้ได้ +15 คะแนน'}</div>
+        </div>
+        <button class="btn-act" style="background:${champStatus.semifinalClosed?'var(--red)':'var(--green)'}" onclick="toggleSemifinal('${ap}', ${!champStatus.semifinalClosed})">
+          ${champStatus.semifinalClosed ? 'เปิดกลับ (ROUND2)' : 'ปิด SF แล้ว (ROUND3)'}
+        </button>
+      </div>
+      <div class="fr">
+        <div class="fg" style="flex:1"><label>ประกาศทีมแชมป์จริง (ต้องตรงตัวอักษรกับชื่อทีมในระบบ)</label>
+          <input type="text" id="a-champ-team" placeholder="เช่น Argentina"></div>
+        <div class="fg" style="justify-content:flex-end"><label>&nbsp;</label>
+          <button class="btn-act" onclick="adminSetChampion('${ap}')">ให้คะแนนแชมป์</button>
+        </div>
+      </div>
+      <div class="msg" id="a-champ-msg"></div>
+      <p style="font-size:11px;color:var(--faint);margin-top:6px">⚠ กดปุ่มนี้เมื่อจบรอบชิงชนะเลิศแล้วเท่านั้น — ระบบจะให้คะแนนตาม tier ของแต่ละคนทันที (ROUND1=+30, ROUND2=+15, ROUND3=+10)</p>
+    </div>
+  </div>
+
+  <div class="as">
     <div class="ah">📋 รอบแบ่งกลุ่ม — แก้ผลใน Google Sheet เท่านั้น</div>
     <div class="ab">
       <p style="font-size:13px;color:var(--text);line-height:1.7">
@@ -542,6 +644,7 @@ function renderAdmin(matches, users, ap, el) {
       </p>
     </div>
   </div>
+
 
   <div class="as">
     <div class="ah">👥 สมาชิก (${users.length} คน)</div>
@@ -569,6 +672,23 @@ async function adminResult(ap) {
   msg.className = r.ok ? 'msg ok' : 'msg err';
   if (r.ok) setTimeout(loadAdmin, 1500);
 }
+
+async function toggleSemifinal(ap, newVal) {
+  const r = await api({ action:'setSemifinalClosed', adminPassword:ap, closed:newVal });
+  if (r.ok) { toast(newVal ? '✓ ปิดรอบรองฯ แล้ว — ตอนนี้ +10' : '✓ เปิดกลับ — ตอนนี้ +15'); loadAdmin(); }
+  else toast('❌ '+r.error);
+}
+
+async function adminSetChampion(ap) {
+  const team = document.getElementById('a-champ-team').value.trim();
+  const msg = document.getElementById('a-champ-msg');
+  if (!team) { msg.textContent='❌ กรุณากรอกชื่อทีม'; msg.className='msg err'; return; }
+  msg.textContent='⏳ กำลังให้คะแนน...'; msg.className='msg';
+  const r = await api({ action:'setChampionWinner', champion:team, adminPassword:ap });
+  msg.textContent = r.ok ? `✓ ให้คะแนนแล้ว · ${r.awarded} คนทายถูก` : '❌ '+r.error;
+  msg.className = r.ok ? 'msg ok' : 'msg err';
+}
+
 
 let _tt;
 function toast(msg) {
